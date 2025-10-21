@@ -39,23 +39,21 @@ class Program
         if (verticalMode)
         {
             // --- РЕЖИМ ДЛЯ SSD1306 / SSD1309 ---
-            int pages = (height + 7) / 8; // округляем вверх
+            int pages = (height + 7) / 8; // количество страниц по 8 пикселей по вертикали
 
-            for (int x = 0; x < width; x++)
+            for (int page = 0; page < pages; page++)
             {
-                for (int page = 0; page < pages; page++)
+                for (int x = 0; x < width; x++)
                 {
                     byte b = 0;
                     for (int bit = 0; bit < 8; bit++)
                     {
                         int y = page * 8 + bit;
-                        int bitValue = 0;
+                        if (y >= height) break;
 
-                        if (y < height)
-                        {
-                            Color pixel = bmp.GetPixel(x, y);
-                            bitValue = (pixel.R + pixel.G + pixel.B) / 3 < 128 ? 1 : 0;
-                        }
+                        // Берём пиксель — инвертируем (1 = тёмный)
+                        Color pixel = bmp.GetPixel(x, y);
+                        int bitValue = (pixel.R + pixel.G + pixel.B) / 3 < 128 ? 1 : 0;
 
                         b |= (byte)(bitValue << bit);
                     }
